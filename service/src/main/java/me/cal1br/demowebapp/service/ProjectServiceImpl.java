@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -64,10 +66,18 @@ public class ProjectServiceImpl implements ProjectService {
 
             for (final Map.Entry<Set<Long>, Duration> setDurationEntry : mapPairDuration.entrySet()) {
                 final ProjectPairDuration projectPairDuration = new ProjectPairDuration();
+                final Iterator<Long> iterator = setDurationEntry.getKey().iterator();
+                projectPairDuration.setEmployeeFirstId(iterator.next());
+                projectPairDuration.setEmployeeSecondId(iterator.next());
+                if (projectPairDuration.getEmployeeFirstId() > projectPairDuration.getEmployeeSecondId()) {
+                    //ordering in a descending way, so we always get the same results
+                    final long temp = projectPairDuration.getEmployeeFirstId();
+                    projectPairDuration.setEmployeeFirstId(projectPairDuration.getEmployeeSecondId());
+                    projectPairDuration.setEmployeeSecondId(temp);
+                }
                 projectPairDuration.setProjectId(longListEntry.getKey());
                 projectPairDuration.setWorkedTogetherTime(setDurationEntry.getValue());
-                //TODO
-                result.add()
+                result.add(projectPairDuration);
             }
         }
 
@@ -76,7 +86,9 @@ public class ProjectServiceImpl implements ProjectService {
         //check the duration if they do
         //the algorithm should work if these durations are seperated
 
-        return
+        return result.stream()
+                .sorted(Comparator.comparing(ProjectPairDuration::getWorkedTogetherTime))
+                .collect(Collectors.toList());
     }
 
     /**
