@@ -1,34 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import PairDurationModel from "model/PairDurationModel";
+import PairDurationModel from "./model/PairDurationModel";
 import DataGrid from 'react-data-grid';
-import 'react-data-grid/lib/styles.css'
 import CSVUpload from "./components/CSVUpload";
 
+import './App.css';
+import 'react-data-grid/lib/styles.css'
 
 const columns = [
-    {width: 100, key: 'fistId', name: 'fistId'},
-    {width: 100, key: 'secondId', name: 'secondId'},
-    {width: 100, key: 'projectId', name: 'projectId'},
-    {width: 100, key: 'duration', name: 'duration'},
+    {width: 150, key: 'employeeFirstId', name: 'First employee Id'},
+    {width: 150, key: 'employeeSecondId', name: 'Second employee Id'},
+    {width: 100, key: 'projectId', name: 'Project Id'},
+    {width: 300, key: 'duration', name: 'Number of days'},
 ]
 
 
 function App() {
     const [rows, setRows] = React.useState<PairDurationModel[]>([]);
-
+    console.log(rows)
     return (
-        <div>
+        <div className={'root'}>
             <header className="App-header"></header>
             <main>
-                <CSVUpload></CSVUpload>
-                <div>
+                <div style={{padding:10}}>
+                    <CSVUpload onCompleteCallback={(rows)=>{
+                        setRows(rows);
+                    }
+                    }/>
+                </div>
+                <div style={{width:'100%',height:'100%'}}>
                     <DataGrid columns={columns}
                               rows={rows}
-                              rowKeyGetter={(row) => row.id as number}
+                              rowKeyGetter={(row) => ''+row.firstId+row.secondId+row.projectId+row.duration}
                               rowHeight={35}
-                          //    onRowsChange={props.onRowsChange}
                               className="fill-grid"
                               direction={'ltr'}
                     />

@@ -1,33 +1,35 @@
 import axios from "axios";
-import React from "react";
+import React, {ChangeEvent, FormEvent} from "react";
+import PairDurationModel from "../model/PairDurationModel";
 
-function CSVUpload(): JSX.Element {
+interface CSVUploadProps{
+    onCompleteCallback?: (rows: PairDurationModel[]) => void;
+}
+function CSVUpload(props: CSVUploadProps): JSX.Element {
 
-    const [selectedFile, setSelectedFile] = React.useState();
-    const [isFilePicked, setIsFilePicked] = React.useState(false);
+    const [selectedFile, setSelectedFile] = React.useState<any>('');
 
-    const changeHandler = (event) => {
-        setSelectedFile(event.target.files[0]);
-        setIsFilePicked(true);
+    const changeHandler = (event:ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files){
+            setSelectedFile(event.target.files[0]);
+        }
     };
-    const handlePhotoUpload = (event: any) => { //todo fix any
+    const handlePhotoUpload = (event: FormEvent<HTMLFormElement>) => { //todo fix any
         event.preventDefault();
-
-        const url = 'http://localhost:8080/';
+        const url = 'http://localhost:8080/project/upload';
         const formData = new FormData();
-        formData.append("File", selectedFile);
+        formData.append("file", selectedFile);
         axios.post(url, formData).then(
-            () => {
-                console.log("Succes");
-            },
-            () => {
-                console.error("Error:");
+            (resp) => {
+                if(props.onCompleteCallback){
+                    props.onCompleteCallback(resp.data)
+                }
             }
         );
     };
 
     return (
-        <form onSumbit={handlePhotoUpload}>
+        <form style={{margin:10}} onSubmit={handlePhotoUpload}>
             <input type="file" name="file" onChange={changeHandler}/>
             <button>Upload CSV</button>
         </form>

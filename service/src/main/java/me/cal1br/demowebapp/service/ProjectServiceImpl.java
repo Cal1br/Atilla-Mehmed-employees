@@ -100,7 +100,7 @@ public class ProjectServiceImpl implements ProjectService {
         var from = getMax(innerWorkPrj.getDateFrom(), outerWorkPrj.getDateFrom());
         var to = getMin(innerWorkPrj.getDateTo(), outerWorkPrj.getDateTo());
         if (from.before(to)) {
-            Duration.between(from.toInstant(), to.toInstant());
+           return Duration.between(from.toInstant(), to.toInstant());
         }
         return Duration.ZERO;
     }

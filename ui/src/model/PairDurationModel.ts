@@ -1,8 +1,8 @@
 class PairDurationModel {
-    private fistId? :number;
-    private secondId? :number;
-    private projectId? :number;
-    private duration? : number;
+    firstId? :number;
+    secondId? :number;
+    projectId? :number;
+    duration? : number;
 }
 
 export default PairDurationModel;
